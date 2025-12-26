@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netflix do Amor</title>
+<style>
+/* Fonte estilo Netflix */
+body, h1, h2, h3, h4, h5, h6, p, div, button {
+  font-family: 'Netflix Sans', 'Arial Black', Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #141414;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* Fundo animado */
+.banner {
+  position: relative;
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+}
+.banner::before {
+  content: "";
+  position: absolute;
+  top: -5%;
+  left: -5%;
+  width: 110%;
+  height: 110%;
+  background:
+    linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+    url('img/fundo.jpg') center/cover no-repeat;
+  z-index: -1;
+  animation: zoomMove 15s ease-in-out infinite;
+  filter: brightness(0.7);
+}
+@keyframes zoomMove {
+  0% { transform: scale(1) translate(0,0); }
+  25% { transform: scale(1.08) translate(-10px, 5px); }
+  50% { transform: scale(1.12) translate(10px, -5px); }
+  75% { transform: scale(1.08) translate(-5px, 10px); }
+  100% { transform: scale(1) translate(0,0); }
+}
+
+/* Título animado */
+#titulo-principal {
+  font-size: 28px;
+  margin: 20px 0 8px;
+  animation: tituloAnim 2s infinite alternate;
+}
+@keyframes tituloAnim {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Botões animados */
+.banner .hero button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.banner .hero button:hover {
+  background-color: #b0060f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+}
+.banner .hero button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(255,0,0,0.3);
+}
+
+/* Texto da sinopse */
+.texto-grande { 
+  display: none; 
+  margin-top: 15px; 
+  color: #fff; 
+  font-size: 16px; 
+  line-height: 1.6; 
+  max-height: none; 
+  overflow: visible; 
+  white-space: pre-wrap;
+  border-left: 2px solid #e50914; 
+  padding-left: 10px;
+  font-family: 'Netflix Sans', 'Arial Black', Arial, Helvetica, sans-serif;
+}
+
+/* Seção de fotos */
+.section-title { padding: 15px 20px; font-size: 18px; margin-top: 20px; display: none; }
+.row {
+  display: flex;
+  gap: 15px;
+  padding: 15px 20px 40px;
+  overflow-x: auto;
+  opacity: 0;
+  max-height: 0;
+  transition: all 0.5s ease;
+}
+.row.show { opacity: 1; max-height: 500px; }
+.row::-webkit-scrollbar { display: none; }
+
+.card {
+  min-width: 140px;
+  height: 210px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  text-align: center;
+  padding: 10px;
+  color: #fff;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.3s;
+}
+.card.show { transform: translateY(0); opacity: 1; }
+.card img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+.card:hover, .card:active, .card:focus { transform: scale(1.1); box-shadow: 0 8px 20px rgba(255,255,255,0.3); }
+
+@media (max-width: 600px) {
+  .banner .hero h1 { font-size: 22px; }
+  .banner .hero p { font-size: 14px; }
+  .banner .hero button { font-size: 14px; padding: 8px 16px; }
+  .card { min-width: 120px; height: 180px; font-size: 12px; }
+}
+
+/* Cursor piscando */
+@keyframes blink { 0%,50%,100%{opacity:1} 25%,75%{opacity:0} }
+.cursor { display:inline-block; animation: blink 0.7s infinite; }
+</style>
+</head>
+<body>
+
+<section class="banner">
+  <div class="logo">NETFLIX</div>
+  <div class="hero">
+    <h1 id="titulo-principal">Uma história que vale a pena assistir ❤️</h1>
+    <p>Temporada 1 • Romance • Infinito</p>
+
+    <button id="ler-btn">Sinopse</button>
+    <div class="texto-grande" id="texto-romantico"></div>
+
+    <button id="assistir-btn">▶ Assistir</button>
+  </div>
+</section>
+
+<div class="section-title" id="section-title">Momentos em alta</div>
+<div class="row" id="cards-row">
+  <div class="card"><img src="img/foto1.jpg" alt="Foto 1"></div>
+  <div class="card"><img src="img/foto2.jpg" alt="Foto 2"></div>
+  <div class="card"><img src="img/foto3.jpg" alt="Foto 3"></div>
+  <div class="card"><img src="img/foto4.jpg" alt="Foto 4"></div>
+</div>
+
+<audio id="som-btn" src="click.mp3" preload="auto"></audio>
+
+<script>
+const somBtn = document.getElementById('som-btn');
+const assistirBtn = document.getElementById('assistir-btn');
+const lerBtn = document.getElementById('ler-btn');
+const textoRomantico = document.getElementById('texto-romantico');
+const cardsRow = document.getElementById('cards-row');
+const sectionTitle = document.getElementById('section-title');
+
+const historia = [
+  "Esta é a história que se passa em Guararema, São Paulo, onde dois adolescentes se cruzam em caminhos inesperados.",
+  "No começo, talvez não se suportem, mas aos poucos, ele consegue quebrar as barreiras do coração dela.",
+  "Eles estavam na reta final do ensino médio quando descobrem um amor que surge de forma delicada e intensa, e a partir daí começam a se envolver cada vez mais, construindo conexões profundas, intimidade e momentos que ficarão para sempre na memória.",
+  "O primeiro selinho marca o início de uma transformação, e tudo que parecia pequeno vai evoluindo: beijos, abraços apertados e aquela paixão intensa que deixa o coração acelerado… mas isso fica para um próximo capítulo.",
+  "Como em toda boa história, nem tudo são flores. O final do ano chega, e eles precisam se afastar, cada um seguindo seu caminho.",
+  "Mas, mesmo distantes, permanecem ligados, conectados por sentimentos que ultrapassam a distância.",
+  "Convidamos você a conhecer essa história, a se envolver com cada instante e descobrir até onde esse amor pode chegar.",
+  "Uma narrativa de descobertas, emoção e paixão, que vai tocar o seu coração e deixar você ansioso pelo próximo capítulo."
+];
+
+// Typewriter com cursor
+function typeWriterParagraphs(paragraphs, element, speed = 50) {
+  let i = 0;
+  element.innerHTML = '';
+
+  function typeParagraph() {
+    if (i < paragraphs.length) {
+      let j = 0;
+      const para = document.createElement('p');
+      element.appendChild(para);
+
+      const textSpan = document.createElement('span');
+      para.appendChild(textSpan);
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      cursor.textContent = '|';
+      para.appendChild(cursor);
+
+      function typeLetter() {
+        if (j < paragraphs[i].length) {
+          textSpan.textContent += paragraphs[i].charAt(j);
+          j++;
+          setTimeout(typeLetter, speed);
+        } else {
+          para.removeChild(cursor);
+          i++;
+          typeParagraph();
+        }
+      }
+      typeLetter();
+    }
+  }
+  typeParagraph();
+}
+
+// Botão Sinopse
+lerBtn.addEventListener('click', () => {
+  if(textoRomantico.style.display === 'block'){
+    textoRomantico.style.display = 'none';
+  } else {
+    textoRomantico.style.display = 'block';
+    typeWriterParagraphs(historia, textoRomantico, 50);
+  }
+});
+
+// Botão Assistir
+assistirBtn.addEventListener('click', () => {
+  if(!cardsRow.classList.contains('show')){
+    somBtn.currentTime = 0;
+    somBtn.volume = 1.0;
+    somBtn.play().catch(() => console.log("Clique para ouvir"));
+
+    cardsRow.classList.add('show');
+    sectionTitle.style.display = 'block';
+
+    setTimeout(() => {
+      const cards = cardsRow.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.classList.remove('show'); 
+        setTimeout(() => { card.classList.add('show'); }, index * 400);
+      });
+    }, 4000);
+
+    window.scrollTo({ top: cardsRow.offsetTop, behavior: 'smooth' });
+  } else {
+    cardsRow.classList.remove('show');
+    sectionTitle.style.display = 'none';
+    cardsRow.querySelectorAll('.card').forEach(card => card.classList.remove('show'));
+  }
+});
+</script>
+
+</body>
+</html>
